@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Flash Point – Exponat Scannen</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red: #E53A1A;
+      --red-dark: #C02E10;
+      --bg: #111111;
+      --card: #1C1C1C;
+      --border: #2E2E2E;
+      --text: #FFFFFF;
+      --text-muted: #888888;
+      --orange: #E87030;
+      --font-display: 'Barlow Condensed', sans-serif;
+      --font-body: 'Barlow', sans-serif;
+    }
+
+    html, body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100svh;
+      padding: 48px 24px 40px;
+      max-width: 430px;
+      margin: 0 auto;
+      gap: 10px;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 6px;
+      animation: fadeDown 0.5s ease both;
+    }
+
+    .back-btn {
+      font-size: 22px;
+      text-decoration: none;
+      color: var(--text);
+      margin-right: 14px;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .page-title {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 28px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .page-sub {
+      font-size: 14px;
+      color: var(--text-muted);
+      text-align: center;
+      margin-bottom: 8px;
+      animation: fadeDown 0.5s 0.05s ease both;
+    }
+
+    /* Scanner viewfinder */
+    .scanner-box {
+      width: 100%;
+      aspect-ratio: 1 / 0.85;
+      background: #1A1A1A;
+      border-radius: 16px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      animation: fadeUp 0.5s 0.1s ease both;
+      overflow: hidden;
+    }
+
+    /* Corner brackets */
+    .corner {
+      position: absolute;
+      width: 36px;
+      height: 36px;
+      border-color: var(--red);
+      border-style: solid;
+    }
+    .corner-tl { top: 16px; left: 16px; border-width: 3px 0 0 3px; border-radius: 4px 0 0 0; }
+    .corner-tr { top: 16px; right: 16px; border-width: 3px 3px 0 0; border-radius: 0 4px 0 0; }
+    .corner-bl { bottom: 16px; left: 16px; border-width: 0 0 3px 3px; border-radius: 0 0 0 4px; }
+    .corner-br { bottom: 16px; right: 16px; border-width: 0 3px 3px 0; border-radius: 0 0 4px 0; }
+
+    /* Scan line animation */
+    .scan-line {
+      position: absolute;
+      left: 16px; right: 16px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--red), transparent);
+      animation: scanMove 2.5s ease-in-out infinite;
+      opacity: 0.7;
+    }
+
+    @keyframes scanMove {
+      0%   { top: 20%; }
+      50%  { top: 75%; }
+      100% { top: 20%; }
+    }
+
+    .scanner-label {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 3px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      position: absolute;
+      bottom: 20px;
+    }
+
+    .scanner-icon {
+      font-size: 48px;
+      opacity: 0.4;
+    }
+
+    /* Hint text */
+    .hint {
+      font-size: 14px;
+      color: var(--text-muted);
+      text-align: center;
+      line-height: 1.5;
+      padding: 0 8px;
+      animation: fadeUp 0.5s 0.15s ease both;
+    }
+
+    /* Section label */
+    .section-label {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 16px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      width: 100%;
+      margin-top: 8px;
+      animation: fadeUp 0.5s 0.2s ease both;
+    }
+
+    /* Object cards */
+    .objects {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+      animation: fadeUp 0.5s 0.25s ease both;
+    }
+
+    .object-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .object-info { flex: 1; }
+
+    .object-name {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 20px;
+      letter-spacing: 0.5px;
+    }
+
+    .object-year {
+      font-size: 13px;
+      color: var(--orange);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 2px;
+    }
+
+    .ar-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      align-items: flex-end;
+    }
+
+    /* iOS AR Quick Look button */
+    .ar-ios {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--red);
+      color: white;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 8px 14px;
+      border-radius: 20px;
+      -webkit-tap-highlight-color: transparent;
+      transition: background 0.15s, transform 0.1s;
+      white-space: nowrap;
+    }
+
+    .ar-ios:active { background: var(--red-dark); transform: scale(0.96); }
+
+    /* Android Scene Viewer button */
+    .ar-android {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #2A2A2A;
+      color: #CCCCCC;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 8px 14px;
+      border-radius: 20px;
+      border: 1px solid #3A3A3A;
+      -webkit-tap-highlight-color: transparent;
+      transition: background 0.15s, transform 0.1s;
+      white-space: nowrap;
+    }
+
+    .ar-android:active { background: #333; transform: scale(0.96); }
+
+    .ar-badge {
+      font-size: 11px;
+      opacity: 0.7;
+    }
+
+    /* Start button */
+    .btn-primary {
+      display: block;
+      width: 100%;
+      padding: 20px;
+      background: var(--red);
+      color: white;
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 22px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.15s, transform 0.1s;
+      -webkit-tap-highlight-color: transparent;
+      animation: fadeUp 0.5s 0.35s ease both;
+    }
+
+    .btn-primary:active { background: var(--red-dark); transform: scale(0.97); }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <a href="instructions.html" class="back-btn">←</a>
+    <div class="page-title">Exponat Scannen</div>
+  </div>
+
+  <div class="page-sub">Richte die Kamera auf das Leuchtgerät/QR Code</div>
+
+  <!-- Scanner viewfinder -->
+  <div class="scanner-box">
+    <div class="corner corner-tl"></div>
+    <div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div>
+    <div class="corner corner-br"></div>
+    <div class="scan-line"></div>
+    <div class="scanner-icon">🔦</div>
+    <div class="scanner-label">Leuchtgerät</div>
+  </div>
+
+  <div class="hint">Halte das Handy stabil und richte es auf das Leuchtgerät / QR Code im Museum</div>
+
+  <!-- AR Objects section -->
+  <div class="section-label">3D Objekte in AR</div>
+
+  <div class="objects">
+
+    <!-- Feuerwehrhelm -->
+    <div class="object-card">
+      <div class="object-info">
+        <div class="object-name">Feuerwehrhelm</div>
+        <div class="object-year">Historisch ca. 1880</div>
+      </div>
+      <div class="ar-buttons">
+        <!-- iOS AR Quick Look -->
+        <a rel="ar" href="assets/models/helm.usdz" class="ar-ios">
+          <span>iOS AR</span>
+          <span class="ar-badge">🍎</span>
+        </a>
+        <!-- Android Scene Viewer -->
+        <a href="intent://arvr.google.com/scene-viewer/1.0?file=https://codingkr1s.github.io/flashpoint/assets/models/helm.gltf&mode=ar_only#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=https://codingkr1s.github.io/flashpoint/assets/models/helm.gltf;end;" class="ar-android">
+          <span>Android AR</span>
+          <span class="ar-badge">🤖</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Feuerlöscher -->
+    <div class="object-card">
+      <div class="object-info">
+        <div class="object-name">Feuerlöscher</div>
+        <div class="object-year">Historisch ca. 1816</div>
+      </div>
+      <div class="ar-buttons">
+        <a rel="ar" href="assets/models/feuerloescher.usdz" class="ar-ios">
+          <span>iOS AR</span>
+          <span class="ar-badge">🍎</span>
+        </a>
+        <a href="intent://arvr.google.com/scene-viewer/1.0?file=https://codingkr1s.github.io/flashpoint/assets/models/feuerloescher.gltf&mode=ar_only#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=https://codingkr1s.github.io/flashpoint/assets/models/feuerloescher.gltf;end;" class="ar-android">
+          <span>Android AR</span>
+          <span class="ar-badge">🤖</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Taschenlampe -->
+    <div class="object-card">
+      <div class="object-info">
+        <div class="object-name">Taschenlampe</div>
+        <div class="object-year">Historisch ca. 1970</div>
+      </div>
+      <div class="ar-buttons">
+        <a rel="ar" href="assets/models/taschenlampe.usdz" class="ar-ios">
+          <span>iOS AR</span>
+          <span class="ar-badge">🍎</span>
+        </a>
+        <a href="intent://arvr.google.com/scene-viewer/1.0?file=https://codingkr1s.github.io/flashpoint/assets/models/taschenlampe.gltf&mode=ar_only#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=https://codingkr1s.github.io/flashpoint/assets/models/taschenlampe.gltf;end;" class="ar-android">
+          <span>Android AR</span>
+          <span class="ar-badge">🤖</span>
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <a href="game.html" class="btn-primary">▶ Spiel Starten</a>
+
+</body>
+</html>

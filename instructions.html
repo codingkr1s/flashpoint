@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Flash Point – So geht's</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red: #E53A1A;
+      --red-dark: #C02E10;
+      --bg: #111111;
+      --bg2: #1E1010;
+      --text: #FFFFFF;
+      --text-muted: #999999;
+      --orange: #E87030;
+      --font-display: 'Barlow Condensed', sans-serif;
+      --font-body: 'Barlow', sans-serif;
+    }
+
+    html, body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100svh;
+      padding: 32px 28px 36px;
+      max-width: 430px;
+      margin: 0 auto;
+      gap: 28px;
+    }
+
+    /* Flame circle (smaller, header version) */
+    .flame-circle {
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 50% 60%, #3D1A0A 0%, #1E0A0A 60%, #110808 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 72px;
+      flex-shrink: 0;
+      box-shadow: 0 0 60px rgba(229, 58, 26, 0.20);
+      animation: fadeDown 0.6s ease both;
+    }
+
+    .intro-text {
+      font-family: var(--font-body);
+      font-size: 17px;
+      font-weight: 500;
+      line-height: 1.55;
+      color: var(--text);
+      animation: fadeUp 0.6s 0.1s ease both;
+    }
+
+    .intro-text .icon { margin-right: 6px; }
+
+    .section-label {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: 1px;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+      animation: fadeUp 0.6s 0.15s ease both;
+    }
+
+    .step {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      font-size: 17px;
+      font-weight: 500;
+      line-height: 1.4;
+    }
+
+    .step-num {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 22px;
+      color: var(--red);
+      min-width: 26px;
+      line-height: 1.2;
+    }
+
+    .hud-info {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 100%;
+      animation: fadeUp 0.6s 0.2s ease both;
+    }
+
+    .hud-row {
+      font-size: 16px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .hud-row .icon { font-size: 18px; }
+
+    .btn-primary {
+      display: block;
+      width: 100%;
+      padding: 20px;
+      background: var(--red);
+      color: white;
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 22px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+      margin-top: auto;
+      transition: background 0.15s, transform 0.1s;
+      -webkit-tap-highlight-color: transparent;
+      animation: fadeUp 0.6s 0.3s ease both;
+    }
+
+    .btn-primary:active {
+      background: var(--red-dark);
+      transform: scale(0.97);
+    }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="flame-circle">🔥</div>
+
+  <div class="intro-text">
+    <span class="icon">🔦</span> Scanne ein Leuchtgerät –
+    Tauche in den AR-Raum ein und finde alle versteckten Feuerwehrobjekte.
+  </div>
+
+  <div class="steps">
+    <div class="section-label">So geht's:</div>
+    <div class="step">
+      <span class="step-num">1.</span>
+      <span>Leuchte den Raum ab</span>
+    </div>
+    <div class="step">
+      <span class="step-num">2.</span>
+      <span>Tippe gefundene Objekte an</span>
+    </div>
+    <div class="step">
+      <span class="step-num">3.</span>
+      <span>Je schneller, desto mehr Punkte!</span>
+    </div>
+  </div>
+
+  <div class="hud-info">
+    <div class="hud-row"><span class="icon">⏱️</span> Zeit — oben links</div>
+    <div class="hud-row"><span class="icon">🎯</span> Objekte — oben rechts</div>
+  </div>
+
+  <a href="scan.html" class="btn-primary">Leuchtgerät Scannen</a>
+
+</body>
+</html>

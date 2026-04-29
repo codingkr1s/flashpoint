@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Flash Point – Leaderboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red: #E53A1A;
+      --red-dark: #C02E10;
+      --bg: #111111;
+      --card: #1C1C1C;
+      --border: #2E2E2E;
+      --text: #FFFFFF;
+      --text-muted: #888888;
+      --gold: #F5C518;
+      --silver: #AAAAAA;
+      --bronze: #CD7F32;
+      --font-display: 'Barlow Condensed', sans-serif;
+      --font-body: 'Barlow', sans-serif;
+    }
+
+    html, body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100svh;
+      padding: 48px 24px 40px;
+      max-width: 430px;
+      margin: 0 auto;
+      gap: 20px;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      animation: fadeDown 0.5s ease both;
+    }
+
+    .back-btn {
+      font-size: 22px;
+      text-decoration: none;
+      color: var(--text);
+      margin-right: 14px;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .page-title {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 28px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .trophy-icon {
+      font-size: 18px;
+      margin-right: 8px;
+    }
+
+    /* Top 3 podium cards */
+    .podium {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+      animation: fadeUp 0.5s 0.1s ease both;
+    }
+
+    .podium-card {
+      flex: 1;
+      background: var(--card);
+      border-radius: 16px;
+      padding: 16px 10px;
+      text-align: center;
+      border: 1px solid var(--border);
+      position: relative;
+    }
+
+    .podium-card.first {
+      padding-top: 24px;
+      padding-bottom: 24px;
+      border-color: var(--gold);
+      background: linear-gradient(180deg, rgba(245,197,24,0.08) 0%, var(--card) 100%);
+    }
+
+    .podium-card.second { border-color: var(--silver); }
+    .podium-card.third  { border-color: var(--bronze); }
+
+    .medal {
+      font-size: 28px;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .podium-name {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 17px;
+      letter-spacing: 0.5px;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .podium-time {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 22px;
+      color: var(--gold);
+    }
+
+    .podium-card.second .podium-time { color: var(--silver); }
+    .podium-card.third  .podium-time { color: var(--bronze); }
+
+    /* List entries */
+    .entries {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 100%;
+      animation: fadeUp 0.5s 0.2s ease both;
+    }
+
+    .entry {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .entry-rank {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 20px;
+      color: var(--text-muted);
+      min-width: 28px;
+    }
+
+    .entry-name {
+      flex: 1;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 20px;
+    }
+
+    .entry-time {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 20px;
+      color: var(--text-muted);
+    }
+
+    .btn-primary {
+      display: block;
+      width: 100%;
+      padding: 20px;
+      background: var(--red);
+      color: white;
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 22px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+      margin-top: auto;
+      transition: background 0.15s, transform 0.1s;
+      -webkit-tap-highlight-color: transparent;
+      animation: fadeUp 0.5s 0.35s ease both;
+    }
+
+    .btn-primary:active { background: var(--red-dark); transform: scale(0.97); }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <a href="index.html" class="back-btn">←</a>
+    <div class="page-title"><span class="trophy-icon">🏆</span>Leaderboard</div>
+  </div>
+
+  <!-- Top 3 podium -->
+  <div class="podium">
+    <div class="podium-card second">
+      <span class="medal">🥈</span>
+      <span class="podium-name">Maria K.</span>
+      <div class="podium-time">00:38</div>
+    </div>
+    <div class="podium-card first">
+      <span class="medal">🥇</span>
+      <span class="podium-name">Jonas M.</span>
+      <div class="podium-time">00:29</div>
+    </div>
+    <div class="podium-card third">
+      <span class="medal">🥉</span>
+      <span class="podium-name">Lena S.</span>
+      <div class="podium-time">00:45</div>
+    </div>
+  </div>
+
+  <!-- Remaining entries -->
+  <div class="entries">
+    <div class="entry">
+      <div class="entry-rank">4</div>
+      <div class="entry-name">Peter V.</div>
+      <div class="entry-time">00:52</div>
+    </div>
+    <div class="entry">
+      <div class="entry-rank">5</div>
+      <div class="entry-name">Anna B.</div>
+      <div class="entry-time">01:04</div>
+    </div>
+    <div class="entry">
+      <div class="entry-rank">6</div>
+      <div class="entry-name">Max F.</div>
+      <div class="entry-time">01:12</div>
+    </div>
+    <div class="entry">
+      <div class="entry-rank">7</div>
+      <div class="entry-name">Sophie R.</div>
+      <div class="entry-time">01:18</div>
+    </div>
+    <div class="entry">
+      <div class="entry-rank">8</div>
+      <div class="entry-name">Tim W.</div>
+      <div class="entry-time">01:31</div>
+    </div>
+  </div>
+
+  <a href="index.html" class="btn-primary">Nochmal spielen</a>
+
+</body>
+</html>

@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Flash Point – Spiel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red: #E53A1A;
+      --red-dark: #C02E10;
+      --bg: #080808;
+      --card: #1C1C1C;
+      --border: #2E2E2E;
+      --text: #FFFFFF;
+      --text-muted: #888888;
+      --orange: #E87030;
+      --font-display: 'Barlow Condensed', sans-serif;
+      --font-body: 'Barlow', sans-serif;
+    }
+
+    html, body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      overflow: hidden;
+      height: 100%;
+      touch-action: none;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      height: 100svh;
+      max-width: 430px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    /* HUD */
+    .hud {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 52px 20px 0;
+      position: relative;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .timer-badge {
+      background: var(--red);
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 28px;
+      letter-spacing: 2px;
+      padding: 10px 18px;
+      border-radius: 16px;
+      line-height: 1;
+    }
+
+    .count-badge {
+      background: transparent;
+      border: 2px solid #444;
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 28px;
+      letter-spacing: 1px;
+      padding: 10px 18px;
+      border-radius: 16px;
+      line-height: 1;
+    }
+
+    /* Game canvas area */
+    .game-area {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      cursor: none;
+    }
+
+    /* Moving light beam */
+    .light-beam {
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 200, 80, 0.55) 0%, rgba(200, 140, 30, 0.25) 45%, transparent 70%);
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      transition: left 0.08s linear, top 0.08s linear;
+      will-change: left, top;
+    }
+
+    /* Flashlight icon at center of beam */
+    .flashlight-icon {
+      position: absolute;
+      font-size: 36px;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      filter: drop-shadow(0 0 8px rgba(255,200,80,0.6));
+      transition: left 0.08s linear, top 0.08s linear;
+      will-change: left, top;
+    }
+
+    /* Hidden objects */
+    .hidden-object {
+      position: absolute;
+      font-size: 40px;
+      transform: translate(-50%, -50%);
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.3s;
+      filter: drop-shadow(0 0 6px rgba(255,255,255,0.3));
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .hidden-object.visible { opacity: 1; }
+    .hidden-object.found {
+      opacity: 0.3;
+      pointer-events: none;
+    }
+
+    /* Bottom panel */
+    .bottom-panel {
+      background: rgba(20, 20, 20, 0.95);
+      padding: 20px 24px 36px;
+      border-radius: 24px 24px 0 0;
+      position: relative;
+      z-index: 10;
+    }
+
+    .panel-title {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+
+    .panel-sub {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .btn-primary {
+      display: block;
+      width: 100%;
+      padding: 18px;
+      background: var(--red);
+      color: white;
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 20px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn-primary:active { background: var(--red-dark); transform: scale(0.97); }
+    .btn-primary:disabled { background: #333; color: #666; cursor: not-allowed; }
+
+    /* Object Found popup (bottom sheet style) */
+    .found-sheet {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: #1E1E1E;
+      border-radius: 24px 24px 0 0;
+      padding: 8px 24px 40px;
+      z-index: 20;
+      transform: translateY(100%);
+      transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+      max-height: 80svh;
+      overflow-y: auto;
+    }
+
+    .found-sheet.open { transform: translateY(0); }
+
+    .sheet-handle {
+      width: 40px; height: 4px;
+      background: #444;
+      border-radius: 2px;
+      margin: 12px auto 20px;
+    }
+
+    .found-badge {
+      display: inline-block;
+      background: var(--red);
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 20px;
+      margin-bottom: 10px;
+    }
+
+    .found-name {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 40px;
+      line-height: 1.05;
+      margin-bottom: 6px;
+    }
+
+    .found-year {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 14px;
+    }
+
+    .found-desc {
+      font-size: 16px;
+      line-height: 1.6;
+      color: #CCCCCC;
+      margin-bottom: 20px;
+    }
+
+    .progress-bar-wrap {
+      background: #2A2A2A;
+      border-radius: 12px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .progress-label {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .progress-dots {
+      display: flex;
+      gap: 8px;
+    }
+
+    .dot {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      background: #444;
+    }
+
+    .dot.found { background: var(--red); }
+    .dot.current { background: #888; }
+
+    .sheet-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn-secondary {
+      display: block;
+      width: 100%;
+      padding: 16px;
+      background: #2A2A2A;
+      color: var(--text);
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HUD -->
+  <div class="hud">
+    <div class="timer-badge" id="timer">00:00</div>
+    <div class="count-badge" id="counter">0/3</div>
+  </div>
+
+  <!-- Game area -->
+  <div class="game-area" id="gameArea">
+    <div class="light-beam" id="lightBeam"></div>
+    <div class="flashlight-icon" id="flashlight">🔦</div>
+
+    <!-- Hidden objects -->
+    <div class="hidden-object" id="obj0" style="left:65%;top:45%;" data-index="0">🧯</div>
+    <div class="hidden-object" id="obj1" style="left:30%;top:30%;" data-index="1">⛑️</div>
+    <div class="hidden-object" id="obj2" style="left:70%;top:65%;" data-index="2">🔦</div>
+  </div>
+
+  <!-- Bottom panel (default state) -->
+  <div class="bottom-panel" id="bottomPanel">
+    <div class="panel-title">Bewege das Licht</div>
+    <div class="panel-sub">Finde alle versteckten Objekte</div>
+    <button class="btn-primary" id="foundBtn" disabled>Objekt Gefunden →</button>
+  </div>
+
+  <!-- Object found sheet -->
+  <div class="found-sheet" id="foundSheet">
+    <div class="sheet-handle"></div>
+    <div class="found-badge">Gefunden!</div>
+    <div class="found-name" id="sheetName">Feuerlöscher</div>
+    <div class="found-year" id="sheetYear">Historisch ca. 1816</div>
+    <div class="found-desc" id="sheetDesc">Bereits im Jahr 1816 wurde der erste Feuerlöscher von George William Manby erfunden. In seinem Gerät setzte Manby Wasser, Asche und Pressluft als Löschmittel ein.</div>
+
+    <div class="progress-bar-wrap">
+      <span class="progress-label">Fortschritt</span>
+      <div class="progress-dots">
+        <div class="dot" id="dot0"></div>
+        <div class="dot" id="dot1"></div>
+        <div class="dot" id="dot2"></div>
+      </div>
+    </div>
+
+    <div class="sheet-buttons">
+      <button class="btn-primary" id="continueBtn">Weiter Suchen →</button>
+      <a href="leaderboard.html" class="btn-secondary">Spiel Beenden</a>
+    </div>
+  </div>
+
+  <script>
+    const objects = [
+      { name: 'Feuerlöscher', year: 'Historisch ca. 1816', desc: 'Bereits im Jahr 1816 wurde der erste Feuerlöscher von George William Manby erfunden. In seinem Gerät setzte Manby Wasser, Asche und Pressluft als Löschmittel ein.', emoji: '🧯' },
+      { name: 'Feuerwehrhelm', year: 'Historisch ca. 1880', desc: 'Der Feuerwehrhelm schützt den Kopf der Einsatzkräfte vor herabfallenden Gegenständen, Hitze und Flammen. Frühe Modelle bestanden aus Leder oder Metall.', emoji: '⛑️' },
+      { name: 'Taschenlampe', year: 'Historisch ca. 1970', desc: 'Die Taschenlampe ist ein unverzichtbares Werkzeug für Feuerwehrleute bei Einsätzen in verrauchten oder dunklen Gebäuden. Frühe Modelle nutzten Glühbirnen, moderne LED.', emoji: '🔦' }
+    ];
+
+    const gameArea = document.getElementById('gameArea');
+    const lightBeam = document.getElementById('lightBeam');
+    const flashlight = document.getElementById('flashlight');
+    const timerEl = document.getElementById('timer');
+    const counterEl = document.getElementById('counter');
+    const foundBtn = document.getElementById('foundBtn');
+    const foundSheet = document.getElementById('foundSheet');
+    const continueBtn = document.getElementById('continueBtn');
+
+    let lightX = 50, lightY = 50;
+    let targetX = 50, targetY = 50;
+    let seconds = 0;
+    let foundCount = 0;
+    let activeObjectIndex = -1;
+    const REVEAL_RADIUS = 80;
+    const foundObjects = [false, false, false];
+
+    // Timer
+    setInterval(() => {
+      seconds++;
+      const m = String(Math.floor(seconds / 60)).padStart(2, '0');
+      const s = String(seconds % 60).padStart(2, '0');
+      timerEl.textContent = m + ':' + s;
+    }, 1000);
+
+    // Move light on touch
+    function moveLight(x, y) {
+      const rect = gameArea.getBoundingClientRect();
+      targetX = x - rect.left;
+      targetY = y - rect.top;
+    }
+
+    gameArea.addEventListener('touchmove', e => {
+      e.preventDefault();
+      moveLight(e.touches[0].clientX, e.touches[0].clientY);
+    }, { passive: false });
+
+    gameArea.addEventListener('mousemove', e => {
+      moveLight(e.clientX, e.clientY);
+    });
+
+    // Smooth light follow
+    function animateLight() {
+      lightX += (targetX - lightX) * 0.12;
+      lightY += (targetY - lightY) * 0.12;
+
+      lightBeam.style.left = lightX + 'px';
+      lightBeam.style.top = lightY + 'px';
+      flashlight.style.left = lightX + 'px';
+      flashlight.style.top = (lightY + 50) + 'px';
+
+      // Check proximity to each object
+      objects.forEach((_, i) => {
+        if (foundObjects[i]) return;
+        const el = document.getElementById('obj' + i);
+        const rect = gameArea.getBoundingClientRect();
+        const ox = parseFloat(el.style.left) / 100 * gameArea.offsetWidth;
+        const oy = parseFloat(el.style.top) / 100 * gameArea.offsetHeight;
+        const dist = Math.sqrt((lightX - ox) ** 2 + (lightY - oy) ** 2);
+
+        if (dist < REVEAL_RADIUS) {
+          el.classList.add('visible');
+          // Make button active for nearest
+          if (dist < 60) {
+            activeObjectIndex = i;
+            foundBtn.disabled = false;
+            foundBtn.textContent = objects[i].emoji + ' Objekt Gefunden →';
+          }
+        } else {
+          el.classList.remove('visible');
+        }
+      });
+
+      requestAnimationFrame(animateLight);
+    }
+    animateLight();
+
+    // Object click
+    document.querySelectorAll('.hidden-object').forEach(el => {
+      el.addEventListener('click', () => {
+        const idx = parseInt(el.dataset.index);
+        if (!foundObjects[idx]) revealObject(idx);
+      });
+    });
+
+    // Found button
+    foundBtn.addEventListener('click', () => {
+      if (activeObjectIndex >= 0 && !foundObjects[activeObjectIndex]) {
+        revealObject(activeObjectIndex);
+      }
+    });
+
+    function revealObject(idx) {
+      foundObjects[idx] = true;
+      foundCount++;
+      document.getElementById('obj' + idx).classList.add('found');
+      counterEl.textContent = foundCount + '/3';
+
+      // Update sheet
+      const obj = objects[idx];
+      document.getElementById('sheetName').textContent = obj.name;
+      document.getElementById('sheetYear').textContent = obj.year;
+      document.getElementById('sheetDesc').textContent = obj.desc;
+
+      // Update dots
+      for (let i = 0; i < 3; i++) {
+        const dot = document.getElementById('dot' + i);
+        dot.className = 'dot';
+        if (foundObjects[i]) dot.classList.add('found');
+        else if (i === foundCount) dot.classList.add('current');
+      }
+
+      foundSheet.classList.add('open');
+      foundBtn.disabled = true;
+      foundBtn.textContent = 'Objekt Gefunden →';
+      activeObjectIndex = -1;
+
+      if (foundCount === 3) {
+        document.getElementById('continueBtn').textContent = '🏆 Ergebnis ansehen';
+        document.getElementById('continueBtn').onclick = () => { window.location.href = 'leaderboard.html'; };
+      }
+    }
+
+    continueBtn.addEventListener('click', () => {
+      foundSheet.classList.remove('open');
+    });
+  </script>
+
+</body>
+</html>
