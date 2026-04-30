@@ -1,1 +1,185 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Flash Point – Feuerwehr AR</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    :root {
+      --red: #E53A1A;
+      --red-dark: #C02E10;
+      --bg: #111111;
+      --bg2: #1E1010;
+      --text: #FFFFFF;
+      --text-muted: #999999;
+      --orange: #E87030;
+      --font-display: 'Barlow Condensed', sans-serif;
+      --font-body: 'Barlow', sans-serif;
+    }
+
+    html, body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100svh;
+      padding: 48px 28px 40px;
+      max-width: 430px;
+      margin: 0 auto;
+      gap: 0;
+    }
+
+    .flame-circle {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 50% 60%, #3D1A0A 0%, #1E0A0A 60%, #110808 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 84px;
+      flex-shrink: 0;
+      box-shadow: 0 0 80px rgba(229, 58, 26, 0.25);
+      animation: fadeDown 0.6s ease both;
+      margin-bottom: 28px;
+    }
+
+    .title {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 56px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--text);
+      text-align: center;
+      line-height: 1;
+      animation: fadeUp 0.6s 0.1s ease both;
+      margin-bottom: 8px;
+    }
+
+    .title span {
+      color: var(--red);
+    }
+
+    .subtitle {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      text-align: center;
+      animation: fadeUp 0.6s 0.15s ease both;
+      margin-bottom: 36px;
+    }
+
+    .divider {
+      width: 48px;
+      height: 3px;
+      background: var(--red);
+      border-radius: 2px;
+      margin-bottom: 32px;
+      animation: fadeUp 0.6s 0.2s ease both;
+    }
+
+    .description {
+      font-size: 17px;
+      font-weight: 500;
+      line-height: 1.6;
+      color: var(--text-muted);
+      text-align: center;
+      animation: fadeUp 0.6s 0.2s ease both;
+      margin-bottom: 32px;
+    }
+
+    .tags {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      animation: fadeUp 0.6s 0.25s ease both;
+      margin-bottom: auto;
+    }
+
+    .tag {
+      background: #1C1C1C;
+      border: 1px solid #2E2E2E;
+      border-radius: 50px;
+      padding: 6px 14px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-primary {
+      display: block;
+      width: 100%;
+      padding: 20px;
+      background: var(--red);
+      color: white;
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 22px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+      margin-top: 36px;
+      transition: background 0.15s, transform 0.1s;
+      -webkit-tap-highlight-color: transparent;
+      animation: fadeUp 0.6s 0.35s ease both;
+    }
+
+    .btn-primary:active {
+      background: var(--red-dark);
+      transform: scale(0.97);
+    }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="flame-circle">🔥</div>
+
+  <div class="title">Flash<span>Point</span></div>
+  <div class="subtitle">Feuerwehr Museum AR</div>
+
+  <div class="divider"></div>
+
+  <p class="description">
+    Entdecke historische Feuerwehrobjekte mit Augmented Reality. Leuchte den Raum ab, finde alle versteckten Exponate und lerne ihre Geschichte kennen.
+  </p>
+
+  <div class="tags">
+    <div class="tag"><span>🔦</span> AR-Erlebnis</div>
+    <div class="tag"><span>🏆</span> Rangliste</div>
+    <div class="tag"><span>🧯</span> 3 Exponate</div>
+  </div>
+
+  <a href="instructions.html" class="btn-primary">Jetzt Starten</a>
+
+</body>
+</html>
