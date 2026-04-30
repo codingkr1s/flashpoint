@@ -282,6 +282,74 @@
       cursor: pointer;
       -webkit-tap-highlight-color: transparent;
     }
+
+    .ar-section {
+      background: #252525;
+      border: 1px solid #333;
+      border-radius: 16px;
+      padding: 14px 16px;
+      margin-bottom: 12px;
+    }
+
+    .ar-label {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .ar-btn-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-ar-ios {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: var(--red);
+      color: white;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 12px 10px;
+      border-radius: 12px;
+      -webkit-tap-highlight-color: transparent;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .btn-ar-ios:active { background: var(--red-dark); transform: scale(0.96); }
+
+    .btn-ar-android {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: #2A2A2A;
+      color: #CCC;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 12px 10px;
+      border-radius: 12px;
+      border: 1px solid #3A3A3A;
+      -webkit-tap-highlight-color: transparent;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .btn-ar-android:active { background: #333; transform: scale(0.96); }
   </style>
 </head>
 <body>
@@ -327,6 +395,14 @@
       </div>
     </div>
 
+    <div class="ar-section">
+      <div class="ar-label">In AR ansehen</div>
+      <div class="ar-btn-row">
+        <a id="arIosBtn" rel="ar" href="" class="btn-ar-ios">🍎 iOS AR</a>
+        <a id="arAndroidBtn" href="" class="btn-ar-android">🤖 Android AR</a>
+      </div>
+    </div>
+
     <div class="sheet-buttons">
       <button class="btn-primary" id="continueBtn">Weiter Suchen →</button>
       <a href="leaderboard.html" class="btn-secondary">Spiel Beenden</a>
@@ -334,10 +410,26 @@
   </div>
 
   <script>
+    const BASE = 'https://codingkr1s.github.io/flashpoint/assets/models/';
     const objects = [
-      { name: 'Feuerlöscher', year: 'Historisch ca. 1816', desc: 'Bereits im Jahr 1816 wurde der erste Feuerlöscher von George William Manby erfunden. In seinem Gerät setzte Manby Wasser, Asche und Pressluft als Löschmittel ein.', emoji: '🧯' },
-      { name: 'Feuerwehrhelm', year: 'Historisch ca. 1880', desc: 'Der Feuerwehrhelm schützt den Kopf der Einsatzkräfte vor herabfallenden Gegenständen, Hitze und Flammen. Frühe Modelle bestanden aus Leder oder Metall.', emoji: '⛑️' },
-      { name: 'Taschenlampe', year: 'Historisch ca. 1970', desc: 'Die Taschenlampe ist ein unverzichtbares Werkzeug für Feuerwehrleute bei Einsätzen in verrauchten oder dunklen Gebäuden. Frühe Modelle nutzten Glühbirnen, moderne LED.', emoji: '🔦' }
+      {
+        name: 'Feuerlöscher', year: 'Historisch ca. 1816', emoji: '🧯',
+        desc: 'Bereits im Jahr 1816 wurde der erste Feuerlöscher von George William Manby erfunden. In seinem Gerät setzte Manby Wasser, Asche und Pressluft als Löschmittel ein.',
+        ios: 'assets/models/feuerloescher.usdz',
+        android: 'intent://arvr.google.com/scene-viewer/1.0?file=' + BASE + 'feuerloescher.glb&mode=ar_only#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=' + BASE + 'feuerloescher.glb;end;'
+      },
+      {
+        name: 'Feuerwehrhelm', year: 'Historisch ca. 1880', emoji: '⛑️',
+        desc: 'Der Feuerwehrhelm schützt den Kopf der Einsatzkräfte vor herabfallenden Gegenständen, Hitze und Flammen. Frühe Modelle bestanden aus Leder oder Metall.',
+        ios: 'assets/models/helm.usdz',
+        android: 'intent://arvr.google.com/scene-viewer/1.0?file=' + BASE + 'helm.glb&mode=ar_only#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=' + BASE + 'helm.glb;end;'
+      },
+      {
+        name: 'Taschenlampe', year: 'Historisch ca. 1970', emoji: '🔦',
+        desc: 'Die Taschenlampe ist ein unverzichtbares Werkzeug für Feuerwehrleute bei Einsätzen in verrauchten oder dunklen Gebäuden. Frühe Modelle nutzten Glühbirnen, moderne LED.',
+        ios: 'assets/models/taschenlampe.usdz',
+        android: 'intent://arvr.google.com/scene-viewer/1.0?file=' + BASE + 'taschenlampe.glb&mode=ar_only#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=' + BASE + 'taschenlampe.glb;end;'
+      }
     ];
 
     const gameArea = document.getElementById('gameArea');
@@ -443,6 +535,8 @@
       document.getElementById('sheetName').textContent = obj.name;
       document.getElementById('sheetYear').textContent = obj.year;
       document.getElementById('sheetDesc').textContent = obj.desc;
+      document.getElementById('arIosBtn').href = obj.ios;
+      document.getElementById('arAndroidBtn').href = obj.android;
 
       // Update dots
       for (let i = 0; i < 3; i++) {
